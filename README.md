@@ -1,11 +1,11 @@
-# CHECK PONT FINAL
+# MovieSearchList
 ```sh
 A site to find your favorite movies, insert them in a database, put them in your favorite list, etc...
 ```
 
 # Installation
 ```sh
-$ git clone https://github.com/Ben376/movieSearch.git
+$ git clone https://github.com/Ben376/movieSearchSite.git
 $ npm install (front && back)
 $ npm start (first front && then back)
 ```
@@ -14,13 +14,13 @@ $ npm start (first front && then back)
 ```sh
 Connection BDD SQL
 
-Enter your credentials for SQL AND the name of the database you an retrieve in the back up field (cd back)
+Enter your credentials for SQL AND the name of the database you want to which is in the back up field (cd back)
 ```
 
 # Stack
 ```sh
 Javascript
-React // React Redux (need refactoring)
+React
 
 NodeJS // Express
 SQL
