@@ -1,22 +1,13 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from '../actions'
 
-export default class Display extends Component {
-  constructor(props){
-    super(props);
-      this.state={
-        movieList: [],
-      }
-  }
+
+class Display extends Component {
 
   componentWillMount () {
-    fetch('/sql/random')
-    .then(res => res.json())
-    .then(res => {     
-      this.setState({
-        movieList: res.row,
-      });
-  });
-  
+      this.props.actions.fetchingDisplayData('/sql/random')
   }
 
   render() {
@@ -28,7 +19,7 @@ export default class Display extends Component {
 
       <hr />
 
-      {this.state.movieList.map(movie => 
+      {this.props.movieList && this.props.movieList.map(movie => 
       
       <div key={movie.title} style={{border: '1px solid black', padding: '15px', margin: '5px', display: 'inline-block'}} >
               <div >
@@ -42,9 +33,22 @@ export default class Display extends Component {
               </div>
       </div>
       
-      )}
+      ) }
 
     </div>
     )
   }
 }
+
+const mapStateToProps = state =>({
+  movieList: state.data.row
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Display);

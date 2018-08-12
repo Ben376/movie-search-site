@@ -1,23 +1,25 @@
+import * as actionTypes from '../helpers/actionTypes'
+
 const initialState = {
-    value: 0,
-    text: 'hallo',
+    data: [],
+    error: [],
 }
 
-const reducer = (state = initialState, action) => {
+const fetchDisplay = (state = initialState, action) => {
         switch (action.type) {
-            case 'ADD' :
+            case actionTypes.FETCH_DISPLAY :
                 return {
                     ...state,
-                    value: state.value + action.value,
+                    data: action.payload,
                 }
-            case 'DELETE' : 
+            case actionTypes.FETCH_ERROR : 
                 return {
                     ...state,
-                    value: state.value - 10,
+                    error: action.payload,
                 }
             default :
                 return state;
         }
 }
 
-export default reducer;
+export default fetchDisplay;

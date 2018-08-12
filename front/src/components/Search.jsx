@@ -1,29 +1,23 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from '../actions'
 
-export default class Search extends Component {
-constructor(props){
-  super(props);
-    this.state={
-      movieList: [],
-      genreValue: '',
-      yearValue: '',
-      searchDirectorValue: '',
-      searchValue: '',
-      stored: [],
-
+class Search extends Component {
+    constructor(props){
+        super(props);
+            this.state={
+              genreValue: '',
+              yearValue: '',
+              searchDirectorValue: '',
+              searchValue: '',
+              stored: [],
+          }
     }
-}
 
 componentWillMount () {
 
-  fetch('/sql/list')
-  .then(res => res.json())
-  .then(res => {
-
-    this.setState({
-      movieList: res.row,
-    });
-});
+  this.props.actions.fetchingDisplayData('/sql/list')
 
   let memoryCardCopy = this.state.stored;
   for (let i = 0; i < localStorage.length; i++) {
@@ -43,17 +37,12 @@ componentWillMount () {
 }
 
 handleDelete= id => {
+  let form = JSON.stringify(this.state);
 
   if (window.confirm('Are you really sure you want to delete the movie?')) {
-        fetch(`/sql/delete/${id}`,
-        {
-          method: 'DELETE',
-          headers: new Headers({
-            'Content-Type':'application/json'
-          }),
-        })
-  }
+      this.props.actions.fetchingDeleteData(`/sql/delete/${id}`, form)
 
+  }
 }
 
 changeValue (event) {
@@ -129,29 +118,31 @@ handleDeletedStore (x) {
 
   render() {
    
-    let filteredList = this.state.movieList.filter(matched => {
-      return matched.title.toLowerCase()
-      .indexOf(this.state.searchValue
-      .toLowerCase()) !== -1 &&
+    let filteredList = this.props.movieList && this.props.movieList.filter(matched => {
+        return matched.title.toLowerCase()
+                  .indexOf(this.state.searchValue
+                  .toLowerCase()) !== -1 &&
 
-      matched.director.toLowerCase()
-      .indexOf(this.state.searchDirectorValue
-      .toLowerCase()) !== -1 &&
+        matched.director.toLowerCase()
+            .indexOf(this.state.searchDirectorValue
+            .toLowerCase()) !== -1 &&
 
-      matched.genre.toLowerCase()
-      .indexOf(this.state.genreValue
-      .toLowerCase()) !== -1;
-    }
-    )
-    .sort((a,b) => 
-    this.state.yearValue === 'DESC' ?
-    b.year - a.year : 
-    this.state.yearValue === 'ASC' ?
-    a.year - b.year :
-    null
-  );
+        matched.genre.toLowerCase()
+            .indexOf(this.state.genreValue
+            .toLowerCase()) !== -1;
+      }
+      )
+        .sort((a,b) => 
+            this.state.yearValue === 'DESC' ?
+            b.year - a.year : 
+            this.state.yearValue === 'ASC' ?
+            a.year - b.year :
+            null
+    );
 
+    
     return (
+      
       <div>
         <h2> Research </h2>
         <hr />
@@ -247,3 +238,16 @@ handleDeletedStore (x) {
     )
   }
 }
+
+const mapStateToProps = state =>({
+  movieList: state.data.row
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

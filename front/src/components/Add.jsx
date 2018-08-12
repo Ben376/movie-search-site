@@ -1,22 +1,20 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as actions from '../actions'
 
-export default class Add extends Component {
+class Add extends Component {
   constructor(props){
     super(props);
-    this.state = {
-    title : '', year : '',runtime : '',
-    genre : 'Horror', director : '',actors:'', 
-    plot: '', posterUrl: '', flash: '', errorMessage: ''
-  };}
+      this.state = {
+      title : '', year : '',runtime : '',
+      genre : 'Horror', director : '',actors:'', 
+      plot: '', posterUrl: '', flash: '', errorMessage: ''
+    };
+}
 
   handleChange (e) {
     
-/*     if (e.target.name === 'director' || e.target.name ==='actors') {
-      let textInput = e.target.value;
-      textInput = textInput.replace(/[^A-Za-z]/g, "");
-      e.target.value = textInput;
-    } */
-
     if (e.target.name === 'year' || e.target.name === 'runtime') {
           let numberInput = e.target.value;
           numberInput = numberInput.replace(/[^0-9]/g, "");
@@ -47,17 +45,9 @@ export default class Add extends Component {
 
   handleSubmit(event) {
       event.preventDefault()
-      fetch('/sql/add',
-    {
-        method: 'POST',
-        headers: new Headers({'Content-Type':'application/json'}),
-        body: JSON.stringify(this.state),
-    })
-    .then(res => res.json()).then(
-        res => this.setState({flash: res.flash}),
-        err => this.setState({flash: err.flash}),
-        document.querySelector('form').reset()
-    )
+      let form = JSON.stringify(this.state);
+      this.props.actions.fetchingAddData('/sql/add', form)
+
       alert('It has been saved!');
     }
 
@@ -97,3 +87,16 @@ export default class Add extends Component {
     )
   }
 }
+
+const mapStateToProps = state =>({
+  movieList: state.data.row
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Add);
