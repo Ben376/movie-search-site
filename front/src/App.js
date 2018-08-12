@@ -4,9 +4,9 @@ import { Route, Switch, NavLink, Redirect} from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import Loading from './components/Loading'
-import Display from './components/Display'
-import Search from './components/Search'
-import Add from './components/Add'
+import Display from './containers/Display'
+import Search from './containers/Search'
+import Add from './containers/Add'
 
 class App extends Component {
   constructor(props){
