@@ -1,8 +1,13 @@
-import { combineReducers } from 'redux'
-import fetchReducer from './reducer'
+import { combineReducers } from 'redux';
+import fetchDisplayList from './fetchDisplayList';
+import fetchDisplayAll from './fetchDisplayAll';
+import persistFavorites from './persistFavorites';
+
+import firstSaga from './firstSaga';
+
 
 const combinedReducers = combineReducers ({
-    fetchReducer,
+    fetchDisplayList, fetchDisplayAll, persistFavorites, firstSaga,
 });
 
 export default combinedReducers;

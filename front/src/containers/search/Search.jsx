@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as actions from '../actions'
+import React, { Component } from 'react';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
 
 class Search extends Component {
     constructor(props){
@@ -16,8 +17,7 @@ class Search extends Component {
     }
 
 componentWillMount () {
-
-  this.props.actions.fetchingDisplayData('/sql/list')
+  this.props.actions.actionDisplayAllList();
 
   let memoryCardCopy = this.state.stored;
   for (let i = 0; i < localStorage.length; i++) {
@@ -81,22 +81,6 @@ handleChange2 (event) {
 
 }
 
-handleStored (x) {
-  const onLocalStorage = localStorage.getItem(x.ID);
-  let newMemory;
-
-  if (!onLocalStorage) {
-      localStorage.setItem(x.ID, x.title);
-      newMemory = this.state.stored.concat({
-          id: x.ID, 
-          title: x.title});
-  }
-      this.setState({
-        stored: newMemory,
-
-      }) 
-      
-}
 
 handleDeletedStore (x) {
   let updatedMemory;
@@ -139,7 +123,6 @@ handleDeletedStore (x) {
             a.year - b.year :
             null
     );
-
     
     return (
       
@@ -155,7 +138,7 @@ handleDeletedStore (x) {
               <div> 
               {this.state.stored !== undefined && this.state.stored.length ?
               this.state.stored.map(saved => 
-              <div style={{display:'inline-block', margin :'10px', padding: '5px'}}>
+              <div key={saved.title} style={{display:'inline-block', margin :'10px', padding: '5px'}}>
               <p> {saved.title} </p>
               <button onClick={() => this.handleDeletedStore(saved.id)}> remove </button> 
               </div>
@@ -228,7 +211,7 @@ handleDeletedStore (x) {
                 <button onClick={() => this.handleDelete(x.ID)} > Delete </button>
                 </form> 
                 <button id='buttonAdd' key={x.ID}
-                onClick={() => this.handleStored(x)} > Favorite 
+                onClick={() => this.props.actions.actionPersistMovie(x)} > Favorite 
                 </button>
             </div>
         )}
@@ -240,12 +223,12 @@ handleDeletedStore (x) {
 }
 
 const mapStateToProps = state =>({
-  movieList: state.data.row
+  movieList: state.fetchDisplayAll.allList.row,
 });
 
 const mapDispatchToProps = dispatch => {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators(actions, dispatch),
   }
 }
 

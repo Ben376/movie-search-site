@@ -1,13 +1,4 @@
-import * as actionTypes from '../helpers/actionTypes'
-
-export const fetchingDisplayData = api => {
-    return dispatch => {
-        fetch(api).then(res => 
-            res.json()).then(res => 
-                dispatch(fetchDisplaySuccess(res))).catch(error => 
-                    dispatch(fetchDisplayError(error)));
-    }
-}
+import * as actionTypes from '../helpers/actionTypes';
 
 export const fetchingAddData = (api, form) => {
     return dispatch => {
@@ -51,3 +42,31 @@ export const fetchDisplayError = payload => {
         payload,
     }
 }
+
+export const actionDisplayRandomList = payload => {    
+    return {
+        type: actionTypes.FETCH_REQ_LIST,
+        payload,
+    }
+};
+
+export const actionDisplayAllList = payload => {    
+    return {
+        type: actionTypes.FETCH_REQ_ALL_LIST,
+        payload,
+    }
+};
+
+export const actionPersistMovie = id => {    
+    return {
+        type: actionTypes.PERSIST_MOVIE_REQ,
+        id,
+    }
+};
+
+export const actionFirstSaga = payload => {    
+    return {
+        type: actionTypes.FIRST_SAGA,
+        payload,
+    }
+};

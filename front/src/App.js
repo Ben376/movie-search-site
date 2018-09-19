@@ -1,42 +1,33 @@
-import React, { Component } from 'react';
-import './App.css';
-import { Route, Switch, NavLink, Redirect} from 'react-router-dom';
+import React, {Component} from 'react';
+
+import {Route, Switch, NavLink, Redirect, withRouter} from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import Loading from './components/Loading'
-import Display from './containers/Display'
-import Search from './containers/Search'
-import Add from './containers/Add'
+import './App.css';
+
+import Display from './containers/display/Display';
+import Search from './containers/search/Search';
+import Add from './containers/add/Add';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from './actions';
 
 class App extends Component {
-  constructor(props){
-    super(props);
-      this.state={
-        loading: false,
-      }
-  }
 
-  componentDidMount () {
-    setTimeout(() => {
-      this.setState({
-        loading: true
-      })
-    }, 1000);
+  componentWillMount() {
+    this.props.actions.actionFirstSaga();
   }
 
   render() {
     return (
       <div className="App">
-      {!this.state.loading ?
-
-      <Loading /> :
       <div>
         <ul className="header">
             <li><NavLink exact to="/" > Home </NavLink></li>
             <li><NavLink to="/Display" activeStyle={{fontWeight: 'bold', color: 'red'}}> Last movies </NavLink></li>
             <li><NavLink to="/Search" activeStyle={{fontWeight: 'bold', color: 'red'}}> Research </NavLink></li>
             <li><NavLink to="/Add" activeStyle={{fontWeight: 'bold', color: 'red'}}> Add movies </NavLink></li>
-
         </ul>
 
         <div>
@@ -50,11 +41,16 @@ class App extends Component {
         </MuiThemeProvider>
         </div>
       </div>
-
-      }
       </div>
     );
   }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => {
+  return {
+  actions: bindActionCreators(actions, dispatch),
+  };
+};
+
+export default withRouter(connect(null, mapDispatchToProps)(App));
+

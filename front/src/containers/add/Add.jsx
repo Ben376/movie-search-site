@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actions from '../actions'
+import * as actions from '../../actions'
 
 class Add extends Component {
   constructor(props){
@@ -89,7 +89,7 @@ class Add extends Component {
 }
 
 const mapStateToProps = state =>({
-  movieList: state.data.row
+  movieList: state.fetchReducer.data.row
 });
 
 const mapDispatchToProps = dispatch => {
