@@ -1,102 +1,126 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as actions from '../../actions'
+import React, { Component } from 'react';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
+import Input from '../../components/fragments/input/Input';
+import ErrorField from '../../components/fragments/error/ErrorField';
+import Select from '../../components/fragments/select/Select';
+import Button from '../../components/fragments/button/Button';
+
+/* import {objectForm} from '../../utils/objectForm';
+ */
+
+import styles from '../../styles/Input.css';
 
 class Add extends Component {
-  constructor(props){
-    super(props);
-      this.state = {
-      title : '', year : '',runtime : '',
-      genre : 'Horror', director : '',actors:'', 
-      plot: '', posterUrl: '', flash: '', errorMessage: ''
-    };
+    state = {
+    title : '', year : '',runtime : '',
+    genre : 'Horror', director : '',actors:'', 
+    plot: '', posterUrl: '', errorMessage: ''
+  };
+
+  handleChange = e => {
+
+    this.props.actions.actionHandleChange(e)
+
+  if (e.target.name === 'year' || e.target.name === 'runtime') {
+      let numberInput = e.target.value;
+      numberInput = numberInput.replace(/[^0-9]/g, "");
+      e.target.value = numberInput;
+  }
+
+  if (e.target.name === 'year') {
+    if (e.target.value.length && e.target.value.length < 4) {
+      this.setState({ errorMessage: true });
+    } else {
+      this.setState({ errorMessage: false });      
+    }
+  }
+
+  this.setState(
+  {[e.target.name] : e.target.value});
 }
 
-  handleChange (e) {
-    
-    if (e.target.name === 'year' || e.target.name === 'runtime') {
-          let numberInput = e.target.value;
-          numberInput = numberInput.replace(/[^0-9]/g, "");
-          e.target.value = numberInput;
-    }
+  handleKeyPress = e => {
+    const value = e.target.value.split('');
+      if ( value.length > 3 ) {
+        e.preventDefault();
+        e.stopPropagation();
+      } else {
+        return null
+      }
+  } 
 
-    if (e.target.name === 'year') {
-        if (e.target.value.length && e.target.value.length < 4) {
-          this.setState({ errorMessage: true });
-        } else {
-          this.setState({ errorMessage: false });      
-        }
-    }
-
-    this.setState(
-    {[e.target.name] : e.target.value});}
-
-
-    handleKeyPress (e) {
-      const value = e.target.value.split('');
-          if ( value.length > 3 ) {
-                e.preventDefault();
-                e.stopPropagation();
-          } else {
-                return null
-          }
-    } 
-
-  handleSubmit(event) {
-      event.preventDefault()
-      let form = JSON.stringify(this.state);
-      this.props.actions.fetchingAddData('/sql/add', form)
-
-      alert('It has been saved!');
-    }
+  handleSubmit = () => {
+    let form = JSON.stringify(this.props.form);  
+         
+    this.props.actions.actionDatabaseAdd(form)
+    alert('It has been saved!');
+  }
 
   render() {
-    const styleTextField = {padding: '2px', display: 'block', margin: 'auto'};
-    const styleSpace = {marginBottom: '20px'};
+    const {errorMessage} = this.state;
+
+    const change = this.handleChange.bind(this);
+    const key = this.handleKeyPress.bind(this);
+    const submit = this.handleSubmit.bind(this);
+
+    const formObject = [
+      {placeholder: 'title', type: 'text', name: 'title', onChange: change},
+      {placeholder: 'year', type: 'text', name: 'year', onChange: change, onKeyPress: key},
+      {placeholder: 'runtime', type: 'text', name: 'runtime', onChange: change, onKeyPress: key},
+      {placeholder: 'director', type: 'text', name: 'director', onChange: change},
+      {placeholder: 'actors', type: 'text', name: 'actors', onChange: change},
+      {placeholder: 'plot', type: 'text', name: 'plot', onChange: change},
+      {placeholder: 'posterUrl', type: 'text', name: 'posterUrl', onChange: change},
+    ];
+
+    console.log(this.props.form);
 
     return (
       <div>
-        <h4> Add movies </h4>
-        <p> { this.state.errorMessage ? <p style={{color: 'red'}} > Year: 1900 </p> : null }
-        </p>
-        <form style={{display: 'block'}} id='form' onSubmit={this.handleSubmit.bind(this)} >
+      <ErrorField 
+        errorMessage={errorMessage} 
+        title={'ADD MOVIES'} 
+        selectOption={'Year: 1900'} />
 
-            <input style={styleTextField} placeholder='title' type='text' name='title' onChange={this.handleChange.bind(this)} required/>
-            <input style={styleTextField} placeholder='year' type='text' name='year' onKeyPress={this.handleKeyPress.bind(this)} onChange={this.handleChange.bind(this)} required/>
-            <input style={styleTextField} placeholder='runtime' type='text' name='runtime' onChange={this.handleChange.bind(this)} required/>
-            <label style={styleTextField} > Genre
-            </label>
-            <select style={styleSpace} type='text' name='genre' onChange={this.handleChange.bind(this)} required>
-            <option value='Horror' > Horror </option>
-            <option value='Fantasy' > Fantasy </option>
-            <option value='Historical' > Historical </option>
-            <option value='Drama' > Drama </option>
-            <option value='Comedy' > Comedy </option>
-            <option value='Thriller' > Thriller </option>
-            <option value='Sci Fi' > Sci Fi </option>
-            </select>
-            <input style={styleTextField} placeholder='director' type='text' name='director' onChange={this.handleChange.bind(this)} required/>
-            <input style={styleTextField} placeholder='actors' type='text' name='actors' onChange={this.handleChange.bind(this)} required/>
-            <input style={styleTextField} placeholder='plot' type='text' name='plot' onChange={this.handleChange.bind(this)} required/>
-            <input style={styleTextField} placeholder='type yout poster URL' type='text' name='posterUrl' onChange={this.handleChange.bind(this)} required/>
-            <button style={{padding: '5px', margin:'10px', backgroundColor: '#58b0a1'}} type='submit'> Confirm </button>
+      <form 
+        style={{...styles.formBlock}} 
+        id='form' 
+        onSubmit={submit} >
 
-        </form>
+        {formObject.map((input,i) =>    
+          <Input 
+            key={i} 
+            {...formObject[i]} />
+        )}
+
+        <Select 
+          label={'Genre'} 
+          type={'text'} 
+          name={'genre'}
+          value={['Horror', 'Fantasy', 'Historical', 'Drama', 'Comedy', 'Thriller', 'Sci Fi']} 
+          onChange={change}/>
+    
+        <Button 
+          type={'submit'} 
+          title={'Add'} />
+      </form>
       </div>
     )
   }
 }
 
 const mapStateToProps = state =>({
-  movieList: state.fetchReducer.data.row
+  form: state.handleChange.form,
 });
 
 const mapDispatchToProps = dispatch => {
   return {
     actions: bindActionCreators(actions, dispatch)
   }
-}
-
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Add);

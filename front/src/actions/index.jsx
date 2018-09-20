@@ -1,47 +1,18 @@
 import * as actionTypes from '../helpers/actionTypes';
 
-export const fetchingAddData = (api, form) => {
-    return dispatch => {
-        fetch(api, {
-            method: 'POST',
-            headers: new Headers({'Content-Type':'application/json'}),
-            body: form,
-        }).then(res => 
-            res.json()).then(res => 
-                dispatch(fetchDisplaySuccess(res)),
-                document.querySelector('form').reset()
-            ).catch(error => 
-                    dispatch(fetchDisplayError(error)));
-    }
-}
-
-export const fetchingDeleteData = (api, form) => {
-    return dispatch => {
-        fetch(api, {
-            method: 'DELETE',
-            headers: new Headers({'Content-Type':'application/json'}),
-            body: form,
-        }).then(res => 
-            res.json()).then(res => 
-                dispatch(fetchDisplaySuccess(res)),
-            ).catch(error => 
-                    dispatch(fetchDisplayError(error)));
-    }
-}
-
-export const fetchDisplaySuccess = payload => {
+export const actionDatabaseRemove = id => {     
     return {
-        type: actionTypes.FETCH_DISPLAY,
-        payload,
+        type: actionTypes.REQ_DELETE_DATA,
+        id,
     }
-}
+};
 
-export const fetchDisplayError = payload => {
+export const actionDatabaseAdd = form => {         
     return {
-        type: actionTypes.FETCH_ERROR,
-        payload,
+        type: actionTypes.REQ_ADD_DATA,
+        form,
     }
-}
+};
 
 export const actionDisplayRandomList = payload => {    
     return {
@@ -68,5 +39,21 @@ export const actionFirstSaga = payload => {
     return {
         type: actionTypes.FIRST_SAGA,
         payload,
+    }
+};
+
+export const actionPersistRemove = id => {        
+    return {
+        type: actionTypes.PERSIST_MOVIE_REMOVE,
+        id,
+    }
+};
+
+export const actionHandleChange = e => {   
+    console.log('entering action change', e);
+         
+    return {
+        type: actionTypes.HANDLE_CHANGE_SUCCESS,
+        e,
     }
 };

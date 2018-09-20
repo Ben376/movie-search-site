@@ -5,103 +5,61 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 class Search extends Component {
-    constructor(props){
-        super(props);
-            this.state={
+            state={
               genreValue: '',
               yearValue: '',
               searchDirectorValue: '',
               searchValue: '',
-              stored: [],
           }
+
+  componentWillMount () {
+    this.props.actions.actionDisplayAllList();
+  }
+
+  handleDelete = id => {
+    if (window.confirm('Are you really sure you want to delete the movie?')) {
+        this.props.actions.actionDatabaseRemove(id)
     }
-
-componentWillMount () {
-  this.props.actions.actionDisplayAllList();
-
-  let memoryCardCopy = this.state.stored;
-  for (let i = 0; i < localStorage.length; i++) {
-
-          let itemStored = { 
-              id: localStorage.key(i), 
-              title: localStorage.getItem(localStorage.key(i)) 
-  };
-
-          memoryCardCopy.push(itemStored);
   }
 
-  this.setState({
-      stored: memoryCardCopy,
-})
-
-}
-
-handleDelete= id => {
-  let form = JSON.stringify(this.state);
-
-  if (window.confirm('Are you really sure you want to delete the movie?')) {
-      this.props.actions.fetchingDeleteData(`/sql/delete/${id}`, form)
-
+  handleDeletedStore = x => {
+    if (window.confirm('No more your favorite ?')) {
+      this.props.actions.actionPersistRemove(x);
+    } 
   }
-}
 
 changeValue (event) {
-
   this.setState({
     searchValue: event
   })
 }
 
 changeValue2 (event) {
-
   this.setState({
     searchDirectorValue: event
   })
 }
 
 handleChange (event) {
-  
   this.setState(
   {[event.target.name] : event.target.value});
 
   this.setState({
     genreValue: event.target.value,
   })
-
 }
 
 handleChange2 (event) {
-  
   this.setState(
   {[event.target.name] : event.target.value});
 
   this.setState({
     yearValue: event.target.value,
   })
-
-}
-
-
-handleDeletedStore (x) {
-  let updatedMemory;
-  const inLocalStorage = localStorage.getItem(x);
-
-  if (window.confirm('No more your favorite ?') && inLocalStorage) {
-      localStorage.removeItem(x);
-      updatedMemory = this.state.stored.filter(deleted => 
-          deleted.id !== x);
-  } else {
-      updatedMemory = this.state.memory;
-  }
-
-  this.setState({
-    stored: updatedMemory,
-
-  })  
 }
 
   render() {
-   
+
     let filteredList = this.props.movieList && this.props.movieList.filter(matched => {
         return matched.title.toLowerCase()
                   .indexOf(this.state.searchValue
@@ -136,11 +94,11 @@ handleDeletedStore (x) {
               </label>
 
               <div> 
-              {this.state.stored !== undefined && this.state.stored.length ?
-              this.state.stored.map(saved => 
-              <div key={saved.title} style={{display:'inline-block', margin :'10px', padding: '5px'}}>
+              {this.props.persistList !== undefined && this.props.persistList.length ?
+              this.props.persistList.map((saved,i) => 
+              <div key={`${i}${saved.title}`} style={{display:'inline-block', margin :'10px', padding: '5px'}}>
               <p> {saved.title} </p>
-              <button onClick={() => this.handleDeletedStore(saved.id)}> remove </button> 
+              <button onClick={() => this.handleDeletedStore(saved.ID)}> remove </button> 
               </div>
               )
               : 
@@ -200,7 +158,7 @@ handleDeletedStore (x) {
               
             <div key={x.ID} style={{border: '1px solid black', padding: '15px', margin: '5px', width: '400px', heigth: 'auto', display:'inline-block'}}>
                 <h3>{x.title}</h3>
-                <img src={x.posterUrl} alt='poster-movie' />
+                <img src={x.posterUrl} style={{width: '300px',height: '441px'}} alt='poster-movie' />
                 <p> Released: {x.year}</p>
                 <p> Time: {x.runtime}</p>
                 <p> Genre: {x.genre}</p>
@@ -224,6 +182,7 @@ handleDeletedStore (x) {
 
 const mapStateToProps = state =>({
   movieList: state.fetchDisplayAll.allList.row,
+  persistList: state.persistFavorites.persistList,
 });
 
 const mapDispatchToProps = dispatch => {

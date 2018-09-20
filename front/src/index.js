@@ -22,7 +22,7 @@ const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
     key: 'root',
     storage,
-    blacklist: ['firstSaga','fetchDisplayList','fetchDisplayAll'],
+    blacklist: ['addData', 'deletingData', 'firstSaga','fetchDisplayList','fetchDisplayAll'],
   };
   
 const persistedReducer = persistReducer(persistConfig, combinedReducers);
